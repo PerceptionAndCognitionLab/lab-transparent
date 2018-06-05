@@ -1,0 +1,167 @@
+---
+title             : "Minimizing Mistakes In Psychological Science"
+shorttitle        : "Minimizing Mistakes"
+
+author: 
+  - name          : "Jeffrey N. Rouder"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : ""
+    email         : "jrouder@uci.edu"
+  - name          : "Julia M. Haaf"
+    affiliation   : "2"
+  - name          : "Hope K. Snyder"
+    affiliation   : "2"
+
+affiliation:
+  - id            : "1"
+    institution   : "University of California, Irvine"
+  - id            : "2"
+    institution   : "University of Missouri"
+
+author_note: |
+    This paper was written in R-Markdown with code for demonstration integrated into the text. The Markdown script is open and freely available at [https://github.com/PerceptionAndCognitionLab/lab-transparent](https://github.com/PerceptionAndCognitionLab/lab-transparent).  J.R. adapted the database and computer automation solutions reported herein.  J.H. adopted the expanded documented reported herein as well as assisted in writing the manuscript.  H.S. has served as a critical user of these approaches and has suggested several improvements.  The three authors jointly wrote the manuscript.
+    
+abstract: |
+    Developing and implementing best practices in organizing a lab is challenging.  The challenge is compounded by the availability of new technologies such as cloud storage and by new cultural norms, such as the open-science movement.  Here we discuss a few practices designed to increase the reliability of scientific labs by focusing on what technologies and elements minimize common, ordinary mistakes.  We borrow principles from the Theory of High-Reliability Organizations which has been used to characterize operational practices in high-risk environments such as aviation and healthcare.  From these principles, we focus on five elements: 1. implementing a lab culture focused on learning from mistakes; 2. using computer automation wherever possible; 3. standardizing organization strategies; 4. coding analyses; 5. developing expanded documents that record how analyses were performed.
+  
+keywords          : "Reliable Science, Open Science, High Reliability Organizations, Data Management"
+
+bibliography      : ["r-references.bib", "lab.bib"]
+
+figsintext        : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+lineno            : no
+mask              : no
+
+lang              : "english"
+class             : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r include = FALSE}
+library("papaja")
+```
+
+
+If you have been a member of a psychology lab, then perhaps you are familiar with things not going as well as planned.  You may have experienced a programming error, equipment failure, or, more likely, some rather mundane human mistake.  Our mistakes include failing to properly randomize an experiment, overwriting a file by typing in the wrong name, forgetting to notate an important code, putting relevant information in the wrong directory, analyzing the wrong data set, mislabeling figures, and mistyping test statistic values when transcribing from output to manuscripts.  Finding these mistakes and preventing them from affecting publications is frustrating and time consuming.
+
+Lab practices, especially statistical practices, have come under scrutiny in the last several years.  We perhaps sit at the confluence of three troubling trends:  First, some findings that were once thought to be rock solid have failed to replicate in registered reports [@Ebersole:etal:2016;@Hagger:etal:2016;@Harris:etal:2013;@OpenScienceCollaboration:2015;@Wagenmakers:etal:2016].  Second, the field has been beset by a number of high-profile fraud cases where researchers made up their data [@Bhattacharjee:2013].  Third, seemingly improbable findings have been published in top tier journals.  The most famous of these is @Bem:2011, but several other claimed phenomena seem implausible as well [@Primestein:nd].  
+
+In response to this confluence, there have been many diagnoses and proposed solutions.  Some range from the global where the problem is that incentives reward superficial success at the expense of knowledge accumulation [@Finkel:etal:2015;@Nosek:BarAnan:2012;@Nosek:etal:2012].  Researchers operating under such incentives may cut corners especially in statistical testing [@John:etal:2012;@Simmons:etal:2011;@Yu:etal:2014].  Among the specific recommendations are to value replication experiments [@Nosek:etal:2015;@Roediger:2012;@Wagenmakers:etal:2012a], to be open with data and methods so others may check your work[@Rouder:2016; @Vanpaemel:etal:2015;@Wicherts:etal:2006], and to adopt statistical approaches that require more thought and care [@Benjamin:etal:2017;@Erdfelder:2010;@Gigerenzer:1998;@Rouder:etal:2016c].  
+
+This paper is about none of these issues.  It is about mundane, commonly-made, obvious mistakes---the type that we can all agree are detrimental.  They include bone-headed moves such as reporting statistics on incomplete data, using the wrong version of a figure, failing to properly randomize an experiment, and misplacing important codes.  Everyone has seemingly made them, and nobody appears to be immune.  Obviously, nobody wants to make these mistakes, but is it worthwhile to address them?  Here is why we think ordinary mistakes should be taken seriously:  
+
+First, we think these mistakes are common in the literature. Perhaps the easiest mistake to detect is to search for malformed statements of statistical tests.  A statistical test is malformed if the combination of test statistic and degrees-of-freedom do not match the corresponding $p$-value.  @Nuijten:etal:2016 set out to document the frequency of this one type of error by web scraping statistical tests from published papers.  Worryingly, @Nuijten:etal:2016 found that about half the papers in 30 years of literature contained at least one malformed statistical test.  Although this result has been controversial [@Schmidt:2016], it shows that preventable mistakes enter the literature frequently.  Given this result, it seems likely that the literature has many other types of preventable mistakes.
+
+Second, according to @Gould:1996, simple mistakes tend to go in researchers' preferred direction.  In his famed monograph, *The Mismeasure of Man*, Gould traces how scientists concluded that women were less intelligent than men and that colonized people were less intelligent than Europeans.  Gould documents many questionable research practices that were used in reinforcing preconceived notions.  In this context, he discusses the role of simple errors.  One might think if simple errors just occur randomly, they should be as likely to go against the researchers' preferred direction as for it.  Gould argues that simple errors, however, go in the preferred direction more often than against it.   One mechanism is selective checking.  Researchers tend to check their work vigorously for mistakes when results are against their stated hypotheses and beliefs.  They do not check as vigorously when the results are in the anticipated direction.  Therefore, uncaught mistakes tend to reinforce confirmation bias.
+
+Gould's hypothesis strikes us as reasonable.  Imagine a researcher who fails to properly randomize an experiment.  Say the researcher is studying Stroop context effects, and unbeknownst to the researcher, there is an over representation of incongruent trials.  When there are many incongruent trials, Stroop effects tend to be attenuated [@Logan:Zbrodoff:1979].  Upon failing to find the anticipated priming effect the researcher rechecks the code and finds the randomization mistake.  Suppose instead, however, that there is an over representation of congruent trials.  In this case, Stroop effects are exaggerated [@Logan:Zbrodoff:1979].  The researcher having establish the Stroop effect is less likely to recheck the code.
+
+@Nuijten:etal:2016 arguably found some evidence of this type of bias as well with malformed statistical tests.  Consider all malformed tests where the test statistic is on one side of significance and the $p$-value is on the other.  Of these, about 62\% are of the type where the significance of the $p$-value is overstated and 38\% are of the type were significance is understated.  If we assume that researchers are more interested in showing effects rather than showing invariances for the majority of tests, the overstatement goes towards the researchers anticipated direction. 
+
+<!-- A third reason to take mistakes seriously is perhaps more sociological.  Many researchers may be considering adopting an open science model where they routinely share data and methods.  In publishing Born Open Data [@Rouder:2016], we informally surveyed our colleagues about why they do not share.  Some indicated their data were "messy" inasmuch as they were in idiosyncratic formats or in hard-to-cipher spreadsheets. It would, apparently, take some work to make the data presentable.  Perhaps these self-judgments about data quality explains in part the reticence of researchers to share data [@Vanpaemel:etal:2015; @Wicherts:etal:2006].  One way of incetivizing people to share data is to provide best-practices for minimizing mistakes.  Perhaps having these practices in place will give people the confidence to share more readily. -->
+
+
+# High Reliability Organizations
+
+A starting point for us in improving lab practices is to consider practices in high risk fields where mistakes, failures, and accidents can have devastating consequences, say in aviation, the military, the nuclear power industry, and healthcare.  Fortunately, there is a sub-discipline of management devoted to studying and improving organizations that serve in high-risk environments where accidents may be catastrophic.  Organizations that mitigate risks through ongoing processes are sometimes known as high reliability organizations, and the principles they follow are known as high reliability organization (HRO) principles [@Weick:etal:2008].
+
+Should your lab be a high reliability organization?  Fortunately, mistakes in our labs do not have life-or-death consequences.  Nonetheless, errors in how we produce knowledge waste our time when caught and threaten our reputations when not.  The good news is that the principles of a high reliable organization transfer well to the academic lab setting.  In the following sections we review the five principles.  We describe how they lead to the construction of a better lab.
+
+*Principle I: Sensitivity to Operations:* Those of us in experimental psychology are in the knowledge-production business.  We often focus on the *what* of this business.  What are our experiments?  What are the data?  What are the theories?  What do the data allow us to infer about the theories?  Our attention is on outcomes rather than processes.  Sensitivity to operations means focusing on the processes underlying the *how* of knowledge production.  How do we insure experiments are properly randomized?  How do we document who ran what where?  How do we insure the integrity of the knowledge we produce?  In practice, sensitivity to operations means studying the more mechanistic processes by which a lab produces knowledge.
+
+*Principle II: Preoccupation With Failure:*  High reliability organizations are preoccupied with failures.  They not only scrutinize their operations, they scrutinize them for points of failure. They are constantly trying to envision how things could go wrong and to take safeguards before they do.  One element of this preoccupation is taking near-miss events as seriously as consequential mistakes.  In aviation, for example, runway incursions that have no effect on operations are scrutinized much like runway incursions that materially threaten safety.   In a lab setting, preoccupation means looking for ways to proactively anticipate and avoid mistakes, and taking small mistakes seriously.
+
+*Principles III \& IV: Resiliency in the Face of Failure and Reluctance to Simplify:* Principles III and IV both apply to failures either small or catastrophic.  Resiliency refers to a maturity about failures---that, although they are to be minimized, they will occur from time to time.  This maturity means that the organization has the processes in place to learn from failures so that they will not be repeated.  Reluctance to simplify means that in diagnosing the cause of failures, simple answers, such as operator error, are not considered satisfying.  The goal here is to go to the root of the problem with the acceptance that the organization is responsible for anticipating routine human and machine failures.  Resiliency and reluctance to simplify may be implemented in an experimental psychology lab setting as well.  The key is to avoid considering failures as a failure of meticulousness.  In a resilient lab,  When things go wrong, and they will, it is critical to talk about them, document them, and learn from them.  
+
+*Principle V: Deference to Expertise:* Deference to expertise is a principle designed to address hierarchies in organizations.  Whereas administrators may be higher in the organizational structure, decisions about operations need to reflect deference to people who execute these operations on a daily basis.  In healthcare, hospital administrators must defer to the expertise of nurses and doctors who execute the daily operations.  In aviation, the mechanics who work on planes each day have a unique vantage about safety in the maintenance of planes.  Labs too have a hierarchy.  Deference to expertise means that each lab member, be it an undergraduate research assistant, a lab manager, a graduate student, a post-doctoral fellow, or a PI, has certain expertise.  Undergraduates are helpful at understanding where human mistakes can happen in executing the experiments; graduate students can comment on errors when programming up experiments and doing analysis, and PIs are well suited to shape the culture of the lab and keep long-term goals in mind.  By explicitly deferring to expertise, more reliable pipelines may be established.
+
+These five principles have led in concert to five innovations in our lab: 1. Adopting a lab culture focused on learning from mistakes; 2. Implementing a large degree of computer automation; 3. Standardizing organizational strategies across lab members; 4. Insuring  statistical analyses are coded; and 5. Adopting expanded manuscripts where documentation of analyses are woven into the manuscript files.  We report our journey from the five principles to these five innovations because we think it can help others minimize and mitigate mistakes.  We provide no other evidence of their effectiveness than our experiences.
+
+
+# A Lab Culture Focused on Learning From Mistakes 
+
+Michael Pratte, a former graduate student and current assistant professor, tells the following story:  Back when our experiments were programmed in C and executed in DOS, he mistakenly typecast a variable as an integer rather than as a float.  As a result, the code was not warning participants when they responded too quickly.  We routinely provide this warning to discourage participants from responding very quickly to shorten the duration of the experimental session.  When this mistake was discovered,  Pratte recounts feeling sick to his stomach because the mistake may have affected several months worth of data collection.  
+
+Why did this mistake happen?  It would be easy enough to blame Pratte, but that does nothing to improve the reliability of the lab.  Instead, errors, mistakes, and failures need to be brought out into the open where they may be examined.  Otherwise, it is difficult to learn from them.  Our recommendation is that adverse events be socialized rather than privatized.   Explicit statements of lab values should include some sense that mistakes, when they occur are as much a failure of foresight of the lab as they are a failure of any individual.
+
+Let's see this in action for Pratte's case.  The PI, Rouder, set up the lab so that experiments were programmed in C.  Although the PI knows C well, it is a notoriously difficult programming language in which it is easy to make mistakes.  The real culprit was the PIs choice because mistakes like this are so common in C.  In response, we moved from C to Psychophyscial Toolbox.  
+
+One of our current practices is to record and log all mistakes.    When we make a mistake, we open an adverse-event record, collaboratively, at a lab meeting.  We hash out what happened with full deference to expertise.  And we discuss how our operations may be improved to prevent the mistake in the future.    It is this process that has led to following innovations:
+
+# Implementing Computer Automation
+ 
+All labs keeps records about their experiments, say who did what and when.  The question is whether these records are sufficiently detailed to minimize mistakes and mitigate them when they occur.  One way of knowing if the records are sufficient is to perform *stress tests*.  Consider the following:
+
+- A graduate student has just discovered that the keyboard in Room 3 is sticky, and it must be hit multiple times to record a single keystroke.  You have no idea how long this condition has been in play, but are sure the keyboard was fine last year.  Can you identify all the data that has been obtained in Room 3 this year for inspection?  (This is a true story from our lab.  We had about a three week period with a bad keyboard.  We were able to identify all data that were affected.)
+
+- You have returned to a project after a long hiatus.  You notice that the data have been previously cleaned by a graduate student who, unfortunately, dropped out in his first year.  Do you have a system for recording these cleaning decisions or are those decisions gone with the student?  If the latter, can you find the raw data? (This is a true story as well.)
+
+- The new graduate student just changed the refresh rates on just one of the computers to run her psychophysics experiment.  She did so through the control panel and outside the experimental software.  This is both possible and common in Windows and Mac OS.  Unfortunately, the change affects the timing of the other experiments run on the same computer.  Do you have a record of which sessions were run at which timings?  (This is a true story too)
+
+We are horrible at remembering to collect all the metadata that we should.  And so mistakes we made were compounded by incomplete records.  To address these mistakes, we undertook a fairly large-scale effort to automate meta-data collection.  We programmed the data-collection computers to enter information whenever a participant is run.  As part of the experimental session, the computer launches a simple script asking the participant and experimenter to log in, and then collects demographics on the participant.   The computer records a session entry with all desired information: who ran it, what room was it run in, who was the participant, what was IRB protocol, what were the screen resolutions, etc.  No fuss; no mess; perfect every time!  
+   
+In service of the communal goal of improving the trustworthiness of the literature, we think it should become a field-wide imperative to adopt computer automation.  Some labs may be able to implement computer automation on their own.  There are wonderful resources on the web for learning database management, shell scripting, and programming.  Software Carpentry, a nonprofit organization to improve research computing (https://software-carpentry.org), may be quite helpful; they provide a large collection of web-based lessons in several useful technologies.  The other approach is to use outside-the-lab expertise.  The good news is that the needed expertise surely exists at your university---it might be in your department or college and available for free or at reasonable rates.
+
+# Standardization
+
+The work of a lab may be organized in many ways.  It is our experience that if each lab member is free to chose her or his own organizational strategy, each will chose a different approach.  These differences are fine so long as each lab member tends to her or his work.  The differing strategies, however, become fodder for mistakes as soon as work is shared. 
+
+Perhaps the best example of standardization is that promoted by the Open Science Framework (OSF) storage system.  The basic organization unit in OSF is a *project*.  Underneath projects are data, manuscripts, and other components.  Although projects differ somewhat, the basic structure helps researchers find elements with little if any documentation.  
+
+A well-organized lab should have a specified organizational structure.  Particular attention should be given to the following: standardization of experimental meta-data, standardization of folder-naming conventions, and standardization in versioning.  Standardization in meta-data means that each experiment should look similar.  The lab should have a standard format for elements such as participants, sessions, IRBs, etc.  Of course, variables in experiments differ, but standardization of the naming conventions across experiments is always helpful.  Likewise, we find it helpful to have a standardized naming convention across directories and files so that future understanding of projects is seamless.  
+
+One source of mistakes is the clutter presented by retaining multiple versions of work products.  Labs should have a common approach to versioning.  Approaches to versioning may be as simple as putting set strings directly into file names.  This may include appending dates or version numbers.  However, this approach is not ideal in many ways, and we find that people tend to make mistakes.  Moreover, the file-name approach defeats versioning on most cloud storage systems such as Google Drive, Box, and Drop Box.  These systems have automatic versioning.  Box, for example, automatically assigns version numbers to documents.  Changing the file name defeats this feature.  We use Git for versioning because it gracefully deals with all our versioning needs.  A tutorial may be found at @Vuorre:Curley:2018 and lessons and books are readily available online (see www.http://swcarpentry.github.io/git-novice/ and www.git-scm.com/book).   Mistakes from the clutter of multiple versions are easily avoided by standardizing the versioning strategy ahead of time.
+
+# Coded Analysis
+
+To provided for the greatest reliability, data analysis should be coded.  The alternative to coding is to use menu-driven systems.  The problem with menu-driven systems is that there are choices that need to be made while navigating the menus.  These menu choice may be made quickly, and often without any record of doing so.  Excel, an example of a menu-driven system, is unreliable because while the outputs and formula may be saved, there are many steps, say the copying of cells, that are not documented.  Some analysis programs have both a menu-driven interface and a code-based representation.  An example is SPSS.  These programs are reliable to the degree researchers remember to save their code.  
+
+There are code-based systems without menus including R, Matlab, and SAS.  These systems run simplified computer languages that are tailored for data analysis.  The inputs are the code, which are usually stored as a matter of routine.  One of the nicest features of coded analyses is that the codes may be shared.  In many cases, the code itself is so transparent that no further documentation is needed for understanding and replicating the analyses.
+
+# Expanded Manuscripts
+
+One common source of errors is accurately reporting results of analyses.  Over the years, we have made such tragic mistakes as including the wrong figure in a paper and failing to analyze the cleaned data.  One way of minimizing these errors is to expand the notion of a manuscript to include the provenance of analyses.  A trustworthy manuscript includes a healthy paper trail indicating what code produced the analysis, what version of the code was used, what version of the data were used, when the analysis was conducted, and by whom.  One simple approach could be to use comment functions available in most word processor and typesetting systems.  All analyses can be extensively documented in the comments, and the comments, though not published, should remain with the document.  
+
+We take a more integrated approach to expanding documents.  We use Rmarkdown a new composite of two very powerful platforms.  One is R [@R-base], which was discussed previously.  The other is Markdown, which is a simple typesetting system for creating outputs in pdf, Word, or html.  The Markdown environment is used to typeset the text and equations.  Markdown is one of the simplest, easiest-to-use word processors.  It is not as powerful as Word, but it has all the features researchers need to do reliable science.  Markdown documents are styled, and one of the developed styles is an APA-formatted document [@Aust:Barth:2017].  
+
+The key feature of a Markdown document is that it may contain special boxes that are executed when the document is formatted.  We use this feature to place R-code chunks into the markdown document.  These chunks are executed in R when the document is formatted. The process of formatting the text and executing the R code at the same time is called *knitting*.   
+
+Here we provide an example of knitting.  This manuscript is available at [https://github.com/PerceptionAndCognitionLab/lab-transparent](https://github.com/PerceptionAndCognitionLab/lab-transparent). 
+The project file `paper.Rmd` contains numerous R chunks.  The following chunk is in the paper, and it assigns values -1, 0, 1, 2 to the variable `dat`, takes its sample mean, and does a one-sample $t$-test to see if the true mean is different from zero: 
+
+```{r ex1, echo=T}
+dat <- c(-1,0,1,2) #the data are -1, 0, 1, 2
+sampMean <- mean(dat)
+tResults=t.test(dat)
+tOut=apa_print(tResults)$statistic
+```
+
+The outputs are stored in the variable `sampMean` and `tOut`.  We can reference them within the text using, $`$r round(sampMean,2)$`$.  When this document is knitted, the value of `sampMean` is rounded to two digits and printed; it is `r round(sampMean,2)`.  A similar approach can be taken with the $t$-test, for example $`$r tOut$`$ yields `r tOut`.  Note how transcription errors are avoided. 
+
+The above chunk is too simple to be of much service.  In a real-world application we need to retrieve data from a cloud, clean the data, perform analyses, and draw figures and tables.  However, as users improve their R skills, these tasks become routine.
+
+# Conclusions: Minimizing Mistakes and Moving Toward a More Open Science
+
+The above processes are designed to make a lab more free of mistakes by using computer automation, standardization, coded analyses, and by expanding the document to include documentation of analyses.  Making a lab more reliable does not *per se* commit one to open science.  In our experience, all of these steps minimize mistakes, but none of them need be done in public.
+
+We define open science as working to preserve the ability of others to reach their own opinions of our data and analyses.  Open science is a scary proposition that involves some intellectual risk and professional vulnerability.  Having a reliable pipeline gives us the confidence to be public and open.  And being open and public reinforces the need to be reliable. 
+
+
+We have been practicing open science for two years.  It is our view that there are some not-so-obvious benefits.  Here is how it has worked:  There are many little decisions that people must make in performing research.    To the extent that these little decisions tend to go in a preferred direction, they may be thought of as subtle biases.  These decisions are often made quickly, sometimes without much thought, and sometimes without awareness that a decision has been made. Being open has changed our awareness of these little decisions.  Lab members bring them to the forefront early in the research process where they may be critically examined.  One example is that a student brought up outlier detection very early in the process knowing that not only would she have to report her approach, but that others could try different approaches with the same data.  Addressing these decisions head on, transparently, and early in the process is an example of how practicing open science improves our own science. 
+
+<!-- Our insight that open science promotes better science is consistent with the observational results of @Wicherts:etal:2011.  These authors reanalyzed data in which corresponding authors of 141 publications from 2004 were contacted with requests for their data.  Of the 141 requests, authors shared data from only 49 of these publications, or at a rate of 35\%.  Wicherts et al. asked if there were any systematic differences between the 49 papers where authors shared the data vs. those that they did not.  Not sharing the data was associated with weaker evidence against the null hypothesis and high likelihoods of misformed statistical test statements.  -->
+
+
+\newpage
+
+# References
+```{r create_r-references}
+r_refs(file = "r-references.bib")
+```
+
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
