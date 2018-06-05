@@ -1,4 +1,4 @@
-#Minimizing Mistakes In Psychological Science
+# Minimizing Mistakes In Psychological Science
 
 This repository contains text, analysis, and graphs of the manuscript *Minimizing Mistakes In Psychological Science* authored by Jeff Rouder, Julia Haaf, and Hope Snyder.
 
